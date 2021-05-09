@@ -126,14 +126,8 @@ public class Model {
 				//aggiungo tutti i confinanti di d a daVisitare se non li ho già trattati
 				archi = this.grafo.outgoingEdgesOf(d);
 				for(DefaultEdge e : archi) {
-					if((!visitati.contains(this.grafo.getEdgeTarget(e)) || !daVisitare.contains(this.grafo.getEdgeTarget(e)))
-						&& !d.equals(this.grafo.getEdgeTarget(e))) {
+					if(!visitati.contains(this.grafo.getEdgeTarget(e)) || !daVisitare.contains(this.grafo.getEdgeTarget(e))) {
 						daVisitare.add(this.grafo.getEdgeTarget(e));
-						//i++;
-					}
-					if((!visitati.contains(this.grafo.getEdgeSource(e)) || !daVisitare.contains(this.grafo.getEdgeSource(e)))
-						&& !d.equals(this.grafo.getEdgeSource(e))) {
-						daVisitare.add(this.grafo.getEdgeSource(e));
 						//i++;
 					}
 				}
