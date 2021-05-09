@@ -1,6 +1,5 @@
 package it.polito.tdp.borders.model;
 
-import java.util.List;
 import java.util.Set;
 
 public class TestModel {
