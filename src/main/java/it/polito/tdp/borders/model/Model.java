@@ -16,6 +16,7 @@ import org.jgrapht.event.TraversalListener;
 import org.jgrapht.event.VertexTraversalEvent;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
+import org.jgrapht.traverse.BreadthFirstIterator;
 import org.jgrapht.traverse.DepthFirstIterator;
 
 import it.polito.tdp.borders.db.BordersDAO;
@@ -24,8 +25,7 @@ public class Model {
 	private BordersDAO dao;
 	private Map<Integer, Country> idMap;
 	private Graph<Country, DefaultEdge> grafo;
-	private Map<Country, Country> visita;
-	private List<Country> ultimo;
+	private Map<Country, Country> predecessore;
 	
 	public Model() {
 		this.dao = new BordersDAO();
@@ -77,61 +77,43 @@ public class Model {
 	}
 	
 	public List<Country> getRaggiungibili(Country c) {
-		List<Country> percorso = new LinkedList<>();
+		BreadthFirstIterator<Country, DefaultEdge> bfv = new BreadthFirstIterator<>(this.grafo, c) ;
 		
-		DepthFirstIterator<Country, DefaultEdge> it = new DepthFirstIterator<>(grafo, c);
+		this.predecessore = new HashMap<>() ;
+		this.predecessore.put(c, null) ;
 		
-		ultimo = new ArrayList<>();
-		
-		visita = new HashMap<>();
-		visita.put(c, null);
-		
-		it.addTraversalListener(new TraversalListener<Country, DefaultEdge>(){
+		bfv.addTraversalListener(new TraversalListener<Country, DefaultEdge>() {
 			@Override
 			public void connectedComponentFinished(ConnectedComponentTraversalEvent e) {}
 			@Override
 			public void connectedComponentStarted(ConnectedComponentTraversalEvent e) {}
 			@Override
 			public void edgeTraversed(EdgeTraversalEvent<DefaultEdge> e) {
-				Country c1 = grafo.getEdgeSource(e.getEdge());
-				Country c2 = grafo.getEdgeTarget(e.getEdge());
+				DefaultEdge arco = e.getEdge() ;
+				Country a = grafo.getEdgeSource(arco);
+				Country b = grafo.getEdgeTarget(arco);
 				
-				if(visita.containsKey(c1) && !visita.containsKey(c2)) {
-					visita.put(c2, c1);
-				} else if (visita.containsKey(c2) && !visita.containsKey(c1)){
-					visita.put(c1, c2);
-				}
+				if(predecessore.containsKey(b) && !predecessore.containsKey(a))
+					predecessore.put(a, b) ;
+					
+				else if(predecessore.containsKey(a) && !predecessore.containsKey(b))
+					predecessore.put(b, a) ;
 			}
 			@Override
 			public void vertexTraversed(VertexTraversalEvent<Country> e) {}
 			@Override
-			public void vertexFinished(VertexTraversalEvent<Country> e) {
-				ultimo.add(e.getVertex());
-			}				
+			public void vertexFinished(VertexTraversalEvent<Country> e) {}
 		});
+
 		
-		while(it.hasNext()) {
-			it.next();
-		}
+		List<Country> result = new ArrayList<>() ;
 		
-		if(!visita.containsKey(c)) {
-			return null;
+		while(bfv.hasNext()) {
+			Country f = bfv.next() ;
+			result.add(f) ;
 		}
-		
-		for(Country u : ultimo) {
-			if(!percorso.contains(u))
-				percorso.add(u);
-			
-			Country step = u;
-			
-			while (visita.get(step) != null) {
-				step = visita.get(step);
-				if(!percorso.contains(step))
-					percorso.add(0, step);
-			}
-		}
-		System.out.println(percorso.size());
-		return percorso;
+		System.out.println(result.size());
+		return result ;
 	}
 	public List<Country> getRaggiungibiliIT(Country c) {
 		List<Country> daVisitare = new ArrayList<>();
