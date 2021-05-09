@@ -2,7 +2,6 @@ package it.polito.tdp.borders.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,7 +16,6 @@ import org.jgrapht.event.VertexTraversalEvent;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 import org.jgrapht.traverse.BreadthFirstIterator;
-import org.jgrapht.traverse.DepthFirstIterator;
 
 import it.polito.tdp.borders.db.BordersDAO;
 
@@ -128,16 +126,22 @@ public class Model {
 				//aggiungo tutti i confinanti di d a daVisitare se non li ho già trattati
 				archi = this.grafo.outgoingEdgesOf(d);
 				for(DefaultEdge e : archi) {
-					if(!visitati.contains(this.grafo.getEdgeTarget(e)) || !daVisitare.contains(this.grafo.getEdgeTarget(e))) {
+					if((!visitati.contains(this.grafo.getEdgeTarget(e)) || !daVisitare.contains(this.grafo.getEdgeTarget(e)))
+						&& !d.equals(this.grafo.getEdgeTarget(e))) {
 						daVisitare.add(this.grafo.getEdgeTarget(e));
-						i++;
+						//i++;
+					}
+					if((!visitati.contains(this.grafo.getEdgeSource(e)) || !daVisitare.contains(this.grafo.getEdgeSource(e)))
+						&& !d.equals(this.grafo.getEdgeSource(e))) {
+						daVisitare.add(this.grafo.getEdgeSource(e));
+						//i++;
 					}
 				}
 				//aggiungo d a visitati se non è già presente
 				if(!visitati.contains(d))
 					visitati.add(d);
 				
-				//rimuovo d perché l'ho 'visitato'
+				//rimuovo d perché l'ho "visitato"
 				daVisitare.remove(d);
 				i--;
 			}
