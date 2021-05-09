@@ -28,7 +28,29 @@ public class FXMLController {
 
     @FXML
     void doCalcolaConfini(ActionEvent event) {
-
+    	txtResult.clear();
+    	String sAnno = txtAnno.getText();
+    	int anno;
+    	boolean ok = false;
+    	try {
+    		anno = Integer.parseInt(sAnno);
+    		if(anno >= 1816 && anno <= 2016)
+    			ok = true;
+    	}
+    	catch(NumberFormatException nfe) {
+    		txtResult.setText("Inserire un numero");
+    		return;
+    	}
+    	if(ok) {
+    		model.createGraph(anno);
+    		txtResult.appendText("Trovate " + model.getCountries().size() + " nazioni\n\n");
+    		txtResult.appendText(model.getGradoVertici());
+    		txtResult.appendText("\nNumero di componenti connesse: " + model.getNumberOfConnectedComponents());
+    	}
+    	else {
+    		txtResult.setText("Inserire un anno compreso tra 1816 e 2016");
+    		return;
+    	}
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
