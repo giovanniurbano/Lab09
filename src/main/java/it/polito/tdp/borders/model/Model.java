@@ -72,7 +72,7 @@ public class Model {
 	
 	public Set<Country> getRaggiungibiliCI(Country c){
 		ConnectivityInspector<Country, DefaultEdge> ci = new ConnectivityInspector<>(grafo);
-		//System.out.println(""+ci.connectedSetOf(c).size());
+		System.out.println(ci.connectedSetOf(c).size());
 		return ci.connectedSetOf(c);
 	}
 	
@@ -130,8 +130,38 @@ public class Model {
 					percorso.add(0, step);
 			}
 		}
-		//System.out.println(""+percorso.size());
+		System.out.println(percorso.size());
 		return percorso;
+	}
+	public List<Country> getRaggiungibiliIT(Country c) {
+		List<Country> daVisitare = new ArrayList<>();
+		daVisitare.add(c);
+		List<Country> visitati = new ArrayList<>();
+		Set<DefaultEdge> archi;
+		
+		while(daVisitare.size() > 0) {
+			for(int i=0; i<daVisitare.size(); i++) {
+				Country d = daVisitare.get(i);
+				
+				//aggiungo tutti i confinanti di d a daVisitare se non li ho già trattati
+				archi = this.grafo.outgoingEdgesOf(d);
+				for(DefaultEdge e : archi) {
+					if(!visitati.contains(this.grafo.getEdgeTarget(e)) || !daVisitare.contains(this.grafo.getEdgeTarget(e))) {
+						daVisitare.add(this.grafo.getEdgeTarget(e));
+						i++;
+					}
+				}
+				//aggiungo d a visitati se non è già presente
+				if(!visitati.contains(d))
+					visitati.add(d);
+				
+				//rimuovo d perché l'ho 'visitato'
+				daVisitare.remove(d);
+				i--;
+			}
+		}
+		System.out.println(visitati.size());
+		return visitati;
 	}
 
 }
