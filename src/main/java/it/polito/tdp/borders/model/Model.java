@@ -102,8 +102,7 @@ public class Model {
 			@Override
 			public void vertexFinished(VertexTraversalEvent<Country> e) {}
 		});
-
-		
+	
 		List<Country> result = new ArrayList<>() ;
 		
 		while(bfv.hasNext()) {
@@ -115,30 +114,33 @@ public class Model {
 	}
 	public List<Country> getRaggiungibiliIT(Country c) {
 		List<Country> daVisitare = new ArrayList<>();
-		daVisitare.add(c);
 		List<Country> visitati = new ArrayList<>();
 		Set<DefaultEdge> archi;
+		int i = 0;
 		
-		while(daVisitare.size() > 0) {
-			for(int i=0; i<daVisitare.size(); i++) {
-				Country d = daVisitare.get(i);
-				
-				//aggiungo tutti i confinanti di d a daVisitare se non li ho già trattati
-				archi = this.grafo.outgoingEdgesOf(d);
-				for(DefaultEdge e : archi) {
-					if(!visitati.contains(this.grafo.getEdgeTarget(e)) || !daVisitare.contains(this.grafo.getEdgeTarget(e))) {
-						daVisitare.add(this.grafo.getEdgeTarget(e));
-						//i++;
-					}
+		daVisitare.add(c);
+		while(i < daVisitare.size()) {
+			Country d = daVisitare.get(i);
+			
+			//aggiungo tutti i confinanti di d a daVisitare se non li ho già trattati
+			archi = this.grafo.edgesOf(d);
+			for(DefaultEdge e : archi) {
+				if((!visitati.contains(this.grafo.getEdgeTarget(e)) || !daVisitare.contains(this.grafo.getEdgeTarget(e)))
+						&& !d.equals(this.grafo.getEdgeTarget(e))) {
+					daVisitare.add(this.grafo.getEdgeTarget(e));
 				}
-				//aggiungo d a visitati se non è già presente
-				if(!visitati.contains(d))
-					visitati.add(d);
-				
-				//rimuovo d perché l'ho "visitato"
-				daVisitare.remove(d);
-				i--;
+				if((!visitati.contains(this.grafo.getEdgeSource(e)) || !daVisitare.contains(this.grafo.getEdgeSource(e)))
+						&& !d.equals(this.grafo.getEdgeSource(e))) {
+					daVisitare.add(this.grafo.getEdgeSource(e));
+				}
 			}
+			
+			//aggiungo d a visitati se non è già presente
+			if(!visitati.contains(d))
+				visitati.add(d);
+			
+			//incremento il contatore per scorrere la lista e tenere traccia di quanti stati ho analizzato
+			i++;
 		}
 		System.out.println(visitati.size());
 		return visitati;
