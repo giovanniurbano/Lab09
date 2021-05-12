@@ -44,7 +44,8 @@ public class BordersDAO {
 				+ "FROM country c, contiguity co "
 				+ "WHERE (c.CCode = co.state1no OR c.CCode = co.state2no) "
 				+ "AND co.year <= ? AND co.conttype = 1 "
-				+ "GROUP BY c.CCode";
+				+ "GROUP BY c.CCode "
+				+ "ORDER BY c.stateNme";
 		List<Country> result = new ArrayList<>();
 		
 		try {
