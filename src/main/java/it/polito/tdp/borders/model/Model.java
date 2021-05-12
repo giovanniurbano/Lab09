@@ -125,11 +125,11 @@ public class Model {
 			//aggiungo tutti i confinanti di d a daVisitare se non li ho già trattati
 			archi = this.grafo.edgesOf(d);
 			for(DefaultEdge e : archi) {
-				if((!visitati.contains(this.grafo.getEdgeTarget(e)) || !daVisitare.contains(this.grafo.getEdgeTarget(e)))
+				if(!visitati.contains(this.grafo.getEdgeTarget(e)) && !daVisitare.contains(this.grafo.getEdgeTarget(e))
 						&& !d.equals(this.grafo.getEdgeTarget(e))) {
 					daVisitare.add(this.grafo.getEdgeTarget(e));
 				}
-				if((!visitati.contains(this.grafo.getEdgeSource(e)) || !daVisitare.contains(this.grafo.getEdgeSource(e)))
+				if(!visitati.contains(this.grafo.getEdgeSource(e)) && !daVisitare.contains(this.grafo.getEdgeSource(e))
 						&& !d.equals(this.grafo.getEdgeSource(e))) {
 					daVisitare.add(this.grafo.getEdgeSource(e));
 				}
@@ -144,6 +144,44 @@ public class Model {
 		}
 		System.out.println(visitati.size());
 		return visitati;
+	}
+
+	public List<Country> getRaggiungibiliRIC(Country c) {
+		List<Country> daVisitare = new ArrayList<>();
+		List<Country> visitati = new ArrayList<>();
+		
+		daVisitare.add(c);
+		
+		this.cerca(daVisitare, visitati, 0);
+		
+		System.out.println(visitati.size());
+		return visitati;
+	}
+
+	private void cerca(List<Country> daVisitare, List<Country> visitati, int L) {
+		if(L == daVisitare.size()) {
+			return;
+		}
+		
+		Country d = daVisitare.get(L);
+		Set<Country> vicini;
+		//aggiungo tutti i confinanti di d a daVisitare se non li ho già trattati
+		vicini = Graphs.neighborSetOf(grafo, d); 
+		for(Country v : vicini) {
+			if(!visitati.contains(v) && !daVisitare.contains(v) && !d.equals(v)) {
+				daVisitare.add(v);
+			}
+			if(!visitati.contains(v) && !daVisitare.contains(v) && !d.equals(v)) {
+				daVisitare.add(v);
+			}
+		}
+		
+		//aggiungo d a visitati se non è già presente
+		if(!visitati.contains(d)) {
+			visitati.add(d);
+			cerca(daVisitare, visitati, L+1);
+		}
+		
 	}
 
 }

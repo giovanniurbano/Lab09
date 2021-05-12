@@ -64,7 +64,7 @@ public class FXMLController {
     	txtResult.clear();
     	Country c = cmbStati.getValue();
     	txtResult.setText("Stati raggiungibili a partire da " + c.toString() + ": \n\n");
-    	for(Country cc : model.getRaggiungibiliIT(c)) {
+    	for(Country cc : model.getRaggiungibiliRIC(c)) {
     		if(!c.equals(cc))
     			txtResult.appendText(cc.toString() + "\n");
     	}
